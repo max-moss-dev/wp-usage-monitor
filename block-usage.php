@@ -31,6 +31,7 @@ class Block_Usage {
         
         // AJAX handlers
         add_action('wp_ajax_block_usage_find_posts', array($this, 'find_posts_with_block'));
+        add_action('wp_ajax_block_usage_check_usage', array($this, 'check_block_usage'));
     }
 
     /**
@@ -140,12 +141,59 @@ class Block_Usage {
             return;
         }
         
+        // Get posts with this block
+        $posts = $this->get_posts_with_block($search_pattern);
+        
+        wp_send_json_success(array(
+            'posts' => $posts,
+            'count' => count($posts),
+            'search_pattern' => $search_pattern
+        ));
+    }
+    
+    /**
+     * Check if a block is used in any posts
+     */
+    public function check_block_usage() {
+        // Verify nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'block_usage_nonce')) {
+            wp_send_json_error(array('message' => 'Invalid security token.'));
+            return;
+        }
+        
+        // Get parameters
+        $block_name = isset($_POST['block_name']) ? sanitize_text_field($_POST['block_name']) : '';
+        $search_pattern = isset($_POST['search_pattern']) ? sanitize_text_field($_POST['search_pattern']) : '';
+        
+        if (empty($block_name) || empty($search_pattern)) {
+            wp_send_json_error(array('message' => 'Missing required parameters.'));
+            return;
+        }
+        
+        // Check if any posts use this block
+        $posts = $this->get_posts_with_block($search_pattern, 1);
+        $is_used = !empty($posts);
+        
+        wp_send_json_success(array(
+            'is_used' => $is_used,
+            'block_name' => $block_name
+        ));
+    }
+    
+    /**
+     * Get posts containing a specific block
+     * 
+     * @param string $search_pattern Block search pattern
+     * @param int $limit Maximum number of posts to return
+     * @return array Array of post data
+     */
+    private function get_posts_with_block($search_pattern, $limit = 50) {
         // Construct the search pattern for the block comment
         $block_comment = '<!-- wp:' . $search_pattern;
         
         // Query posts containing this block
         $args = array(
-            'posts_per_page' => 50,
+            'posts_per_page' => $limit,
             'post_type' => 'any',
             'post_status' => 'publish',
             's' => $block_comment,
@@ -175,11 +223,7 @@ class Block_Usage {
             wp_reset_postdata();
         }
         
-        wp_send_json_success(array(
-            'posts' => $posts,
-            'count' => count($posts),
-            'search_pattern' => $block_comment
-        ));
+        return $posts;
     }
 
     /**

@@ -20,38 +20,34 @@
 }
 
 .wp-list-table td {
-    vertical-align: top;
-    padding: 12px;
+    padding: 12px 10px;
 }
 
-/* Style for block name column */
 .wp-list-table td:first-child {
-    font-weight: 500;
-    color: #23282d;
+    padding-left: 15px;
 }
 
-/* Block group hover styling */
+/* Highlight on hover */
 .wp-list-table tr:hover td {
     background-color: #f7f7f7;
 }
 
-/* Specific styling for common block types */
+/* Special styling for different block groups */
 .core-blocks tr:hover td {
-    background-color: #f0f6fc;
+    background-color: #f0f7fc;
 }
 
 .wp-blocks tr:hover td {
-    background-color: #f7fafd;
+    background-color: #f7fcf7;
 }
 
 .woocommerce-blocks tr:hover td {
-    background-color: #f6f7f7;
+    background-color: #fcf7f7;
 }
 
-/* Expanded row styling for when a row is clicked */
+/* Expanded row styling */
 .wp-list-table tr.expanded td {
-    background-color: #f8f8f8;
-    border-bottom: 1px solid #e5e5e5;
+    background-color: #f0f0f0;
 }
 
 .block-usage-container {
@@ -149,4 +145,43 @@
     background: #f8f8f8;
     border-left: 4px solid #dcdcde;
     margin: 10px 0;
+}
+
+/* Filter styles */
+.block-usage-filters {
+    margin: 15px 0 25px;
+    border-bottom: 1px solid #ccd0d4;
+    padding-bottom: 15px;
+}
+
+.block-usage-filters .subsubsub {
+    margin: 0 0 8px;
+}
+
+.block-usage-filters .subsubsub li {
+    margin: 0 10px 0 0;
+}
+
+.block-usage-filters .usage-filter {
+    padding: 2px 5px;
+    text-decoration: none;
+}
+
+.block-usage-filters .usage-filter.current {
+    font-weight: 600;
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+.usage-loading {
+    margin-top: 10px;
+}
+
+/* Block usage status styles */
+.block-row[data-usage-status="used"] {
+    /* Style for used blocks */
+}
+
+.block-row[data-usage-status="unused"] {
+    opacity: 0.6;
 }

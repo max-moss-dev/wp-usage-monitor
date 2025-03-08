@@ -41,6 +41,156 @@
             $mainContent.removeClass('with-sidebar');
             $sidebar.hide();
         });
+
+        // Usage filter functionality
+        $('.usage-filter').on('click', function(e) {
+            e.preventDefault();
+            
+            // Update active filter
+            $('.usage-filter').removeClass('current');
+            $(this).addClass('current');
+            
+            const filterType = $(this).data('filter');
+            
+            // If we're showing all blocks, just show everything
+            if (filterType === 'all') {
+                $('.block-row').show();
+                return;
+            }
+            
+            // Check if we need to analyze block usage first
+            const needsAnalysis = $('.block-row[data-usage-status="loading"]').length > 0;
+            
+            if (needsAnalysis) {
+                // Show loading indicator
+                $('.usage-loading').show();
+                
+                // Start analyzing all blocks
+                analyzeBlockUsage(function() {
+                    // When analysis is complete, filter blocks
+                    filterBlocksByUsage(filterType);
+                    $('.usage-loading').hide();
+                });
+            } else {
+                // We already have usage data, just filter
+                filterBlocksByUsage(filterType);
+            }
+        });
+        
+        /**
+         * Analyze usage for all blocks
+         * 
+         * @param {Function} callback - Function to call when analysis is complete
+         */
+        function analyzeBlockUsage(callback) {
+            const blocks = [];
+            
+            // Collect all blocks to analyze
+            $('.block-row').each(function() {
+                const $row = $(this);
+                const blockName = $row.data('block-name');
+                const $link = $row.find('.block-title-link');
+                const searchPattern = $link.data('search-pattern');
+                
+                blocks.push({
+                    element: $row,
+                    blockName: blockName,
+                    searchPattern: searchPattern
+                });
+            });
+            
+            // Process blocks in batches to avoid overwhelming the server
+            processBatch(blocks, 0, 5, callback);
+        }
+        
+        /**
+         * Process a batch of blocks for usage analysis
+         * 
+         * @param {Array} blocks - Array of block objects
+         * @param {number} startIndex - Starting index for this batch
+         * @param {number} batchSize - Number of blocks to process in this batch
+         * @param {Function} callback - Function to call when all batches are complete
+         */
+        function processBatch(blocks, startIndex, batchSize, callback) {
+            if (startIndex >= blocks.length) {
+                // All blocks processed
+                if (callback) callback();
+                return;
+            }
+            
+            const endIndex = Math.min(startIndex + batchSize, blocks.length);
+            const batch = blocks.slice(startIndex, endIndex);
+            let completedRequests = 0;
+            
+            // Process each block in the current batch
+            batch.forEach(function(block) {
+                checkBlockUsage(block.blockName, block.searchPattern, function(isUsed) {
+                    // Update block row with usage status
+                    block.element.attr('data-usage-status', isUsed ? 'used' : 'unused');
+                    
+                    // Track completed requests
+                    completedRequests++;
+                    
+                    // If all requests in this batch are complete, process the next batch
+                    if (completedRequests === batch.length) {
+                        processBatch(blocks, endIndex, batchSize, callback);
+                    }
+                });
+            });
+        }
+        
+        /**
+         * Check if a block is used in any posts
+         * 
+         * @param {string} blockName - Block name
+         * @param {string} searchPattern - Search pattern
+         * @param {Function} callback - Callback with result
+         */
+        function checkBlockUsage(blockName, searchPattern, callback) {
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'block_usage_check_usage',
+                    block_name: blockName,
+                    search_pattern: searchPattern,
+                    nonce: blockUsageData.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        callback(response.data.is_used);
+                    } else {
+                        callback(false);
+                    }
+                },
+                error: function() {
+                    callback(false);
+                }
+            });
+        }
+        
+        /**
+         * Filter blocks by usage status
+         * 
+         * @param {string} filterType - Filter type ('used' or 'unused')
+         */
+        function filterBlocksByUsage(filterType) {
+            $('.block-row').each(function() {
+                const $row = $(this);
+                const usageStatus = $row.attr('data-usage-status');
+                
+                if (usageStatus === 'loading') {
+                    // If still loading, show for now
+                    $row.show();
+                } else if (filterType === 'used' && usageStatus === 'used') {
+                    $row.show();
+                } else if (filterType === 'unused' && usageStatus === 'unused') {
+                    $row.show();
+                } else {
+                    $row.hide();
+                }
+            });
+        }
         
         /**
          * Fetch posts containing a specific block
@@ -63,8 +213,12 @@
                     
                     if (response.success && response.data.posts.length > 0) {
                         displayPosts(response.data.posts);
+                        // Update block usage status if needed
+                        $('.block-row[data-block-name="' + blockName + '"]').attr('data-usage-status', 'used');
                     } else {
                         $sidebarResults.html('<div class="no-posts-found">No posts found using this block.</div>');
+                        // Update block usage status if needed
+                        $('.block-row[data-block-name="' + blockName + '"]').attr('data-usage-status', 'unused');
                     }
                 },
                 error: function() {
@@ -98,16 +252,10 @@
     });
 
     /**
-     * Initialize the block usage table
+     * Initialize block usage table functionality
      */
     function initBlockUsageTable() {
-        // Add any table functionality here
-        // For example, sorting, filtering, etc.
-        
-        // Simple example: make rows clickable to show more details
-        $('.wp-list-table tbody tr').on('click', function() {
-            $(this).toggleClass('expanded');
-        });
+        // Any additional initialization
     }
 
 })(jQuery);

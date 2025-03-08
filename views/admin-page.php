@@ -7,6 +7,18 @@
                 <p><?php echo esc_html__('No Gutenberg blocks found.', 'block-usage'); ?></p>
             </div>
         <?php else : ?>
+            <div class="block-usage-filters">
+                <ul class="subsubsub">
+                    <li><a href="#" class="usage-filter current" data-filter="all"><?php echo esc_html__('All Blocks', 'block-usage'); ?></a> |</li>
+                    <li><a href="#" class="usage-filter" data-filter="used"><?php echo esc_html__('Used Blocks', 'block-usage'); ?></a> |</li>
+                    <li><a href="#" class="usage-filter" data-filter="unused"><?php echo esc_html__('Unused Blocks', 'block-usage'); ?></a></li>
+                </ul>
+                <div class="clear"></div>
+                <div class="usage-loading" style="display: none;">
+                    <span class="spinner is-active"></span> <?php echo esc_html__('Analyzing block usage...', 'block-usage'); ?>
+                </div>
+            </div>
+            
             <?php 
             // Group blocks by their prefix
             $block_groups = [];
@@ -69,7 +81,7 @@
                                     $search_pattern = substr($block_name, 5); // Remove 'core/' prefix
                                 }
                                 ?>
-                            <tr>
+                            <tr class="block-row" data-block-name="<?php echo esc_attr($block_name); ?>" data-usage-status="loading">
                                 <td>
                                     <a href="#" class="block-title-link" 
                                        data-block-name="<?php echo esc_attr($block_name); ?>" 
