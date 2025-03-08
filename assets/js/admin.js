@@ -346,6 +346,7 @@
             $('.close-sidebar').on('click', function() {
                 $mainContent.removeClass('with-sidebar');
                 $sidebar.hide();
+                $('.block-row.active').removeClass('active');
             });
             
             // Add click handler for "Scan Again" toggle
@@ -417,7 +418,7 @@
                 
                 // Toggle collapsed state
                 $title.toggleClass('collapsed', isCollapsed);
-                $title.closest('.block-group').find('tbody').toggleClass('collapsed', isCollapsed);
+                $title.parent().find('.block-group').toggleClass('collapsed', isCollapsed);
                 
                 // Save state to localStorage
                 saveCollapsedState(groupId, isCollapsed);
@@ -431,7 +432,7 @@
                 
                 if (isCollapsed) {
                     $title.addClass('collapsed');
-                    $title.closest('.block-group').find('tbody').addClass('collapsed');
+                    $title.parent().find('.block-group').addClass('collapsed');
                 }
             });
         }
@@ -466,7 +467,7 @@
                         <button type="button" class="button button-secondary scan-toggle">Scan Again</button>
                         <div class="scan-again-container" style="display: none;">
                             <button type="button" class="button button-secondary scan-blocks">
-                                Scan All Blocks
+                                Scan usage statistics
                             </button>
                             <p class="scan-description">
                                 This will scan your content and calculate accurate usage statistics for all blocks.

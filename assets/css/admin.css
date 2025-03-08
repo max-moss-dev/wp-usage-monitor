@@ -9,6 +9,7 @@
     font-size: 18px;
     color: #23282d;
     cursor: pointer;
+    display: inline-block;
     position: relative;
     padding-left: 25px;
 }
@@ -79,6 +80,10 @@
     transition: margin-right 0.3s ease;
 }
 
+.block-usage-main a {
+    box-shadow: none;
+}
+
 .block-usage-main.with-sidebar {
     margin-right: 350px;
 }
@@ -96,6 +101,10 @@
     z-index: 100;
     padding: 20px;
     box-sizing: border-box;
+}
+
+.block-usage-sidebar a {
+    box-shadow: none;
 }
 
 .sidebar-header {
@@ -121,9 +130,8 @@
 }
 
 .sidebar-results li {
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0;
+    padding: 5px;
 }
 
 .sidebar-results li:last-child {
@@ -161,6 +169,9 @@
 
 .block-row.active td {
     background-color: #f9fcff;
+}
+
+.block-row.active td:first-child {
     border-left: 4px solid #0073aa;
 }
 
@@ -180,8 +191,6 @@
 /* Filter styles */
 .block-usage-filters {
     margin: 15px 0 25px;
-    border-bottom: 1px solid #ccd0d4;
-    padding-bottom: 15px;
 }
 
 .block-usage-filters .subsubsub {
@@ -281,9 +290,11 @@
     padding: 15px;
     background: #f9f9f9;
     border-radius: 3px;
+    display: none;
 }
 
 .block-usage-scan.scan-needed {
+    display: block;
     background: #fffbe5;
     border-left: 4px solid #dba617;
 }
@@ -388,7 +399,6 @@
 }
 
 .post-type-group li {
-    margin-bottom: 8px;
     padding-left: 10px;
     border-left: 3px solid #e2e4e7;
 }

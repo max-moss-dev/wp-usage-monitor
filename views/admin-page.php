@@ -48,7 +48,7 @@
                     <?php endif; ?>
                     
                     <button type="button" class="button button-primary scan-blocks">
-                        Scan All Blocks
+                        Scan usage statistics
                     </button>
                     <p class="scan-description">
                         This will scan your content and calculate accurate usage statistics for all blocks.
@@ -63,7 +63,7 @@
                         <button type="button" class="button button-secondary scan-toggle">Scan Again</button>
                         <div class="scan-again-container" style="display: none;">
                             <button type="button" class="button button-secondary scan-blocks">
-                                Scan All Blocks
+                                Scan usage statistics
                             </button>
                             <p class="scan-description">
                                 This will scan your content and calculate accurate usage statistics for all blocks.
@@ -101,74 +101,73 @@
             
             <!-- Block Groups Sections -->
             <?php foreach ($block_groups as $prefix => $prefix_blocks) : ?>
-                <?php 
-                // Format the prefix for display (capitalize first letter)
-                $display_prefix = ucfirst($prefix);
-                ?>
-                <h2 class="block-group-title"><?php echo esc_html(sprintf(__('%s Blocks', 'block-usage'), $display_prefix)); ?></h2>
-                <table class="wp-list-table widefat fixed striped block-group <?php echo esc_attr($prefix); ?>-blocks">
-                    <thead>
-                        <tr>
-                            <th class="block-title-column">Block Title</th>
-                            <th class="block-name-column">Block Name</th>
-                            <th class="usage-count-column">Usage Count</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($prefix_blocks)) : ?>
-                        <tr>
-                            <td><?php echo esc_html(sprintf(__('No %s blocks found.', 'block-usage'), strtolower($display_prefix))); ?></td>
-                        </tr>
-                        <?php else : ?>
-                            <?php foreach ($prefix_blocks as $block_name => $block) : ?>
-                                <?php
-                                // Format block name as fallback when title is not available
-                                $name_parts = explode('/', $block_name);
-                                $formatted_name = '';
-                                if (isset($name_parts[1])) {
-                                    $formatted_name = ucfirst(str_replace('-', ' ', $name_parts[1]));
-                                } else {
-                                    $formatted_name = ucfirst(str_replace('-', ' ', $block_name));
-                                }
-                                $display_title = isset($block->title) && !empty($block->title) ? $block->title : $formatted_name;
-                                
-                                // Get the search pattern for this block
-                                $search_pattern = $block_name;
-                                if (strpos($block_name, 'core/') === 0) {
-                                    $search_pattern = substr($block_name, 5);
-                                }
-                                
-                                // Check if we have saved usage data
-                                $usage_count = isset($block_usage_stats[$block_name]) ? (int) $block_usage_stats[$block_name] : null;
-                                $usage_status = null;
-                                
-                                if ($usage_count !== null) {
-                                    $usage_status = $usage_count > 0 ? 'used' : 'unused';
-                                }
-                                ?>
-                            <tr class="block-row" data-block-name="<?php echo esc_attr($block_name); ?>" data-usage-status="<?php echo $usage_status ? esc_attr($usage_status) : 'loading'; ?>">
-                                <td class="block-title-cell">
-                                    <a href="#" class="block-title-link" 
-                                       data-block-name="<?php echo esc_attr($block_name); ?>" 
-                                       data-search-pattern="<?php echo esc_attr($search_pattern); ?>">
-                                        <?php echo esc_html($display_title); ?>
-                                    </a>
-                                </td>
-                                <td class="block-name-cell">
-                                    <code><?php echo esc_html($block_name); ?></code>
-                                </td>
-                                <td class="usage-count-cell">
-                                    <?php if ($usage_count !== null): ?>
-                                        <span class="usage-count" data-count="<?php echo $usage_count > 10 ? 'high' : ($usage_count > 0 ? 'medium' : 'low'); ?>"><?php echo $usage_count; ?></span>
-                                    <?php else: ?>
-                                        <span class="usage-count-placeholder">—</span>
-                                    <?php endif; ?>
-                                </td>
+                <?php $display_prefix = ucfirst($prefix); ?>
+                <div class="block-group-container">
+                    <h2 class="block-group-title"><?php echo esc_html(sprintf(__('%s Blocks', 'block-usage'), $display_prefix)); ?></h2>
+                    <table class="wp-list-table widefat fixed striped block-group <?php echo esc_attr($prefix); ?>-blocks">
+                        <thead>
+                            <tr>
+                                <th class="block-title-column">Block Title</th>
+                                <th class="block-name-column">Block Name</th>
+                                <th class="usage-count-column">Usage Count</th>
                             </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($prefix_blocks)) : ?>
+                            <tr>
+                                <td><?php echo esc_html(sprintf(__('No %s blocks found.', 'block-usage'), strtolower($display_prefix))); ?></td>
+                            </tr>
+                            <?php else : ?>
+                                <?php foreach ($prefix_blocks as $block_name => $block) : ?>
+                                    <?php
+                                    // Format block name as fallback when title is not available
+                                    $name_parts = explode('/', $block_name);
+                                    $formatted_name = '';
+                                    if (isset($name_parts[1])) {
+                                        $formatted_name = ucfirst(str_replace('-', ' ', $name_parts[1]));
+                                    } else {
+                                        $formatted_name = ucfirst(str_replace('-', ' ', $block_name));
+                                    }
+                                    $display_title = isset($block->title) && !empty($block->title) ? $block->title : $formatted_name;
+                                    
+                                    // Get the search pattern for this block
+                                    $search_pattern = $block_name;
+                                    if (strpos($block_name, 'core/') === 0) {
+                                        $search_pattern = substr($block_name, 5);
+                                    }
+                                    
+                                    // Check if we have saved usage data
+                                    $usage_count = isset($block_usage_stats[$block_name]) ? (int) $block_usage_stats[$block_name] : null;
+                                    $usage_status = null;
+                                    
+                                    if ($usage_count !== null) {
+                                        $usage_status = $usage_count > 0 ? 'used' : 'unused';
+                                    }
+                                    ?>
+                                <tr class="block-row" data-block-name="<?php echo esc_attr($block_name); ?>" data-usage-status="<?php echo $usage_status ? esc_attr($usage_status) : 'loading'; ?>">
+                                    <td class="block-title-cell">
+                                        <a href="#" class="block-title-link" 
+                                        data-block-name="<?php echo esc_attr($display_title); ?>" 
+                                        data-search-pattern="<?php echo esc_attr($search_pattern); ?>">
+                                            <?php echo esc_html($display_title); ?>
+                                        </a>
+                                    </td>
+                                    <td class="block-name-cell">
+                                        <code><?php echo esc_html($block_name); ?></code>
+                                    </td>
+                                    <td class="usage-count-cell">
+                                        <?php if ($usage_count !== null): ?>
+                                            <span class="usage-count" data-count="<?php echo $usage_count > 10 ? 'high' : ($usage_count > 0 ? 'medium' : 'low'); ?>"><?php echo $usage_count; ?></span>
+                                        <?php else: ?>
+                                            <span class="usage-count-placeholder">—</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
