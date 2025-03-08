@@ -9,9 +9,11 @@
     font-size: 18px;
     color: #23282d;
     cursor: pointer;
-    display: inline-block;
     position: relative;
     padding-left: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .block-group-title:before {
@@ -19,7 +21,7 @@
     font-family: dashicons;
     position: absolute;
     left: 0;
-    top: 0;
+    top: 3px;
 }
 
 .block-group-title.collapsed:before {
@@ -374,10 +376,22 @@
 }
 
 .block-count {
+    font-size: 13px;
+    color: #666;
+    background: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 10px;
     margin-left: 10px;
     font-weight: normal;
-    color: #646970;
-    font-size: 12px;
+}
+
+.used-count {
+    color: #058;
+    font-weight: 600;
+}
+
+.total-count {
+    color: #555;
 }
 
 /* Sidebar post type groups */

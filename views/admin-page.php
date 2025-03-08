@@ -101,9 +101,27 @@
             
             <!-- Block Groups Sections -->
             <?php foreach ($block_groups as $prefix => $prefix_blocks) : ?>
-                <?php $display_prefix = ucfirst($prefix); ?>
+                <?php 
+                // Count used and total blocks in this section
+                $section_total = count($prefix_blocks);
+                $section_used = 0;
+                
+                foreach ($prefix_blocks as $block_name => $block) {
+                    $usage_count = isset($block_usage_stats[$block_name]) ? $block_usage_stats[$block_name] : 0;
+                    if ($usage_count > 0) {
+                        $section_used++;
+                    }
+                }
+                
+                $display_prefix = ucfirst($prefix); 
+                ?>
                 <div class="block-group-container">
-                    <h2 class="block-group-title"><?php echo esc_html(sprintf(__('%s Blocks', 'block-usage'), $display_prefix)); ?></h2>
+                    <h2 class="block-group-title">
+                        <?php echo esc_html(sprintf(__('%s Blocks', 'block-usage'), $display_prefix)); ?>
+                        <span class="block-count">
+                            <span class="used-count"><?php echo $section_used; ?></span> / <span class="total-count"><?php echo $section_total; ?></span> used
+                        </span>
+                    </h2>
                     <table class="wp-list-table widefat fixed striped block-group <?php echo esc_attr($prefix); ?>-blocks">
                         <thead>
                             <tr>

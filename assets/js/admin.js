@@ -188,6 +188,22 @@
             
             $sidebarResults.html(html);
         }
+
+        /**
+         * Filter sections by usage status
+         */
+        function filterSectionsByUsage(filterType) {
+            // Set active class on filter buttons
+            $('.block-group-container').each(function() {
+                const $container = $(this);
+                const count = $container.find('.block-row[data-usage-status="' + filterType + '"]').length;
+
+                $container.show();
+                if ((filterType === 'used' || filterType === 'unused') && count === 0) {
+                    $container.hide();
+                }
+            });
+        }
         
         /**
          * Filter blocks by usage status
@@ -276,52 +292,38 @@
          * Update filter counts based on current block statuses
          */
         function updateFilterCounts() {
-            // Count blocks by status
-            let total = 0;
-            let used = 0;
-            let unused = 0;
+            // Get counts for each filter category
+            const allCount = $('.block-row').length;
+            const usedCount = $('.block-row[data-usage-status="used"]').length;
+            const unusedCount = $('.block-row[data-usage-status="unused"]').length;
             
-            $('.block-row').each(function() {
-                total++;
-                const status = $(this).attr('data-usage-status');
-                if (status === 'used') {
-                    used++;
-                } else if (status === 'unused') {
-                    unused++;
-                }
-            });
+            // Update the filter link text
+            $('.filter-link[data-filter="all"]').text(`All (${allCount})`);
+            $('.filter-link[data-filter="used"]').text(`Used (${usedCount})`);
+            $('.filter-link[data-filter="unused"]').text(`Unused (${unusedCount})`);
             
-            // Update filter labels
-            $('.filter-link[data-filter="all"]').html(`All (${total})`);
-            $('.filter-link[data-filter="used"]').html(`Used (${used})`);
-            $('.filter-link[data-filter="unused"]').html(`Unused (${unused})`);
-            
-            // Update block group counts
+            // Also update the section statistics
             updateBlockGroupCounts();
         }
         
         /**
-         * Update counts in block group headers
+         * Update block group counts (for each section title)
          */
         function updateBlockGroupCounts() {
-            // Process each block group
-            $('.block-group').each(function() {
-                const $group = $(this);
-                const $rows = $group.find('.block-row');
-                const total = $rows.length;
-                let used = 0;
+            // Get section counts for each group
+            $('.block-group-container').each(function() {
+                const $container = $(this);
+                const $table = $container.find('.block-group');
+                const $title = $container.find('.block-group-title');
                 
-                // Count used blocks in this group
-                $rows.each(function() {
-                    if ($(this).attr('data-usage-status') === 'used') {
-                        used++;
-                    }
-                });
+                // Count visible and used blocks
+                const totalBlocks = $table.find('tbody tr').length;
+                const visibleBlocks = $table.find('tbody tr:visible').length;
+                const usedBlocks = $table.find('tbody tr[data-usage-status="used"]').length;
                 
-                // Update the group header
-                const $title = $group.find('.block-group-title');
-                $title.find('.block-count').remove();
-                $title.append(`<span class="block-count">${used} / ${total}</span>`);
+                // Update the counters
+                $title.find('.used-count').text(usedBlocks);
+                $title.find('.total-count').text(totalBlocks);
             });
         }
         
@@ -340,6 +342,7 @@
                 e.preventDefault();
                 const filterType = $(this).data('filter');
                 filterBlocksByUsage(filterType);
+                filterSectionsByUsage(filterType);
             });
             
             // Add click handler for close sidebar button
