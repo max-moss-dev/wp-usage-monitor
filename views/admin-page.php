@@ -198,12 +198,12 @@
         
         <!-- Settings section hidden by default -->
         <div class="settings-panel">
-            <h3><?php echo __('Plugin Settings', 'usage-monitor'); ?></h3>
+            <h3><?php echo esc_html__('Plugin Settings', 'usage-monitor'); ?></h3>
             <form id="usage-monitor-settings-form">
                 <div class="form-field">
                     <input type="radio" name="keep_data" value="yes" <?php checked($keep_data, 'yes'); ?>>
                     <label>
-                        <?php echo __('Keep data when plugin is uninstalled (recommended)', 'usage-monitor'); ?>
+                        <?php echo esc_html__('Keep data when plugin is uninstalled (recommended)', 'usage-monitor'); ?>
                     </label>
                     <p class="description"><?php echo esc_html__('Your block usage data will be preserved if you uninstall the plugin.', 'usage-monitor'); ?></p>
                 </div>
