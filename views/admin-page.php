@@ -9,19 +9,18 @@
         <?php else : ?>
             <div class="usage-monitor-filters">
                 <div class="filter-blocks">
-                    <span class="filter-label">Filter:</span>
-                    <a href="#" class="filter-link active" data-filter="all">All</a> |
-                    <a href="#" class="filter-link" data-filter="used">Used</a> |
-                    <a href="#" class="filter-link" data-filter="unused">Unused</a>
+                    <span class="filter-label"><?php echo esc_html__('Filter:', 'usage-monitor'); ?></span>
+                    <a href="#" class="filter-link active" data-filter="all"><?php echo esc_html__('All', 'usage-monitor'); ?></a> |
+                    <a href="#" class="filter-link" data-filter="used"><?php echo esc_html__('Used', 'usage-monitor'); ?></a> |
+                    <a href="#" class="filter-link" data-filter="unused"><?php echo esc_html__('Unused', 'usage-monitor'); ?></a>
                     <span class="separator">|</span>
-                    <a href="#" class="settings-link" data-tab="settings">Settings</a>
+                    <a href="#" class="settings-link" data-tab="settings"><?php echo esc_html__('Settings', 'usage-monitor'); ?></a>
                 </div>
             </div>
             
             <?php 
-            // Check if scan is needed (content updated since last scan, plugin reactivated, or no stats available)
-            $no_stats = empty($block_usage_stats);
-            $scan_needed = $needs_rescan || $no_stats || $was_reactivated;
+                $no_stats = empty($block_usage_stats);
+                $scan_needed = $needs_rescan || $no_stats || $was_reactivated;
             ?>
             
             <div class="usage-monitor-scan <?php echo $scan_needed ? 'scan-needed' : ''; ?>">
@@ -29,46 +28,46 @@
                     <?php if ($needs_rescan): ?>
                     <div class="notice notice-warning inline">
                         <p>
-                            <strong>Content has been updated since the last scan.</strong> 
-                            The usage statistics may be outdated.
+                            <strong><?php echo esc_html__('Content has been updated since the last scan.', 'usage-monitor'); ?></strong> 
+                            <?php echo esc_html__('The usage statistics may be outdated.', 'usage-monitor'); ?>
                         </p>
                     </div>
                     <?php elseif ($was_reactivated): ?>
                     <div class="notice notice-warning inline">
                         <p>
-                            <strong>Plugin was deactivated and reactivated since the last scan.</strong> 
-                            Content changes may have occurred while the plugin was inactive.
+                            <strong><?php echo esc_html__('Plugin was deactivated and reactivated since the last scan.', 'usage-monitor'); ?></strong> 
+                            <?php echo esc_html__('Content changes may have occurred while the plugin was inactive.', 'usage-monitor'); ?>
                         </p>
                     </div>
                     <?php elseif ($no_stats): ?>
                     <div class="notice notice-info inline">
                         <p>
-                            <strong>No usage statistics available yet.</strong> 
-                            Run a scan to analyze which blocks are being used.
+                            <strong><?php echo esc_html__('No usage statistics available yet.', 'usage-monitor'); ?></strong> 
+                            <?php echo esc_html__('Run a scan to analyze which blocks are being used.', 'usage-monitor'); ?>
                         </p>
                     </div>
                     <?php endif; ?>
                     
                     <button type="button" class="button button-primary scan-blocks">
-                        Scan usage statistics
+                        <?php echo esc_html__('Scan usage statistics', 'usage-monitor'); ?>
                     </button>
                     <p class="scan-description">
-                        This will scan your content and calculate accurate usage statistics for all blocks.
+                        <?php echo esc_html__('This will scan your content and calculate accurate usage statistics for all blocks.', 'usage-monitor'); ?>
                     </p>
                 <?php else: ?>
                     <?php if (isset($last_scan) && $last_scan > 0): ?>
                     <div class="scan-status-ok">
                         <span class="dashicons dashicons-yes-alt"></span>
                         <span class="scan-last-run">
-                            Statistics up to date. Last scan: <?php echo esc_html(human_time_diff($last_scan, time())); ?> ago
+                            <?php echo esc_html__('Statistics up to date. Last scan:', 'usage-monitor'); ?> <?php echo esc_html(human_time_diff($last_scan, time())); ?> <?php echo esc_html__('ago', 'usage-monitor'); ?>
                         </span>
-                        <button type="button" class="button button-secondary scan-toggle">Scan Again</button>
+                        <button type="button" class="button button-secondary scan-toggle"><?php echo esc_html__('Scan Again', 'usage-monitor'); ?></button>
                         <div class="scan-again-container" style="display: none;">
                             <button type="button" class="button button-secondary scan-blocks">
-                                Scan usage statistics
+                                <?php echo esc_html__('Scan usage statistics', 'usage-monitor'); ?>
                             </button>
                             <p class="scan-description">
-                                This will scan your content and calculate accurate usage statistics for all blocks.
+                                <?php echo esc_html__('This will scan your content and calculate accurate usage statistics for all blocks.', 'usage-monitor'); ?>
                             </p>
                         </div>
                     </div>
@@ -124,15 +123,15 @@
                         echo esc_html(sprintf(__('%s Blocks', 'usage-monitor'), $display_prefix)); 
                         ?>
                         <span class="block-count">
-                            <span class="used-count"><?php echo $section_used; ?></span> / <span class="total-count"><?php echo $section_total; ?></span> used
+                            <span class="used-count"><?php echo esc_attr($section_used); ?></span> / <span class="total-count"><?php echo esc_attr($section_total); ?></span> <?php echo esc_html__('used', 'usage-monitor'); ?>
                         </span>
                     </h2>
                     <table class="wp-list-table widefat fixed striped block-group <?php echo esc_attr($prefix); ?>-blocks">
                         <thead>
                             <tr>
-                                <th class="block-title-column">Block Title</th>
-                                <th class="block-name-column">Block Name</th>
-                                <th class="usage-count-column">Usage Count</th>
+                                <th class="block-title-column"><?php echo esc_html__('Block Title', 'usage-monitor'); ?></th>
+                                <th class="block-name-column"><?php echo esc_html__('Block Name', 'usage-monitor'); ?></th>
+                                <th class="usage-count-column"><?php echo esc_html__('Usage Count', 'usage-monitor'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -183,7 +182,7 @@
                                     </td>
                                     <td class="usage-count-cell">
                                         <?php if ($usage_count !== null): ?>
-                                            <span class="usage-count" data-count="<?php echo $usage_count > 10 ? 'high' : ($usage_count > 0 ? 'medium' : 'low'); ?>"><?php echo $usage_count; ?></span>
+                                            <span class="usage-count" data-count="<?php echo esc_attr($usage_count > 10 ? 'high' : ($usage_count > 0 ? 'medium' : 'low')); ?>"><?php echo esc_attr($usage_count); ?></span>
                                         <?php else: ?>
                                             <span class="usage-count-placeholder">—</span>
                                         <?php endif; ?>

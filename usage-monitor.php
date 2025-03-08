@@ -221,8 +221,7 @@ class Block_Usage {
         // Get the buffered content and clean the buffer
         $output = ob_get_clean();
         
-        // Output the admin page
-        echo $output;
+        echo wp_kses_post($output);
     }
     
     /**
