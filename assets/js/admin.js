@@ -19,6 +19,12 @@
         $('.block-title-link').on('click', function(e) {
             e.preventDefault();
             
+            // Remove active class from all rows
+            $('.block-row').removeClass('active');
+            
+            // Add active class to clicked row
+            $(this).closest('.block-row').addClass('active');
+            
             const blockName = $(this).data('block-name');
             const searchPattern = $(this).data('search-pattern');
             const blockTitle = $(this).text().trim();
@@ -40,6 +46,35 @@
         $('.close-sidebar').on('click', function() {
             $mainContent.removeClass('with-sidebar');
             $sidebar.hide();
+        });
+
+        // Make block groups collapsible
+        $('.block-group-title').on('click', function() {
+            const $title = $(this);
+            const $group = $title.next('.block-group');
+            
+            $title.toggleClass('collapsed');
+            $group.toggleClass('collapsed');
+            
+            // Save collapsed state to localStorage
+            const groupId = $title.text().trim();
+            if ($title.hasClass('collapsed')) {
+                saveCollapsedState(groupId, true);
+            } else {
+                saveCollapsedState(groupId, false);
+            }
+        });
+        
+        // Initialize collapsed states from localStorage
+        $('.block-group-title').each(function() {
+            const $title = $(this);
+            const groupId = $title.text().trim();
+            const isCollapsed = getCollapsedState(groupId);
+            
+            if (isCollapsed) {
+                $title.addClass('collapsed');
+                $title.next('.block-group').addClass('collapsed');
+            }
         });
 
         // Usage filter functionality
@@ -76,6 +111,34 @@
                 filterBlocksByUsage(filterType);
             }
         });
+        
+        /**
+         * Save block group collapsed state to localStorage
+         * 
+         * @param {string} groupId - Group identifier
+         * @param {boolean} isCollapsed - Whether the group is collapsed
+         */
+        function saveCollapsedState(groupId, isCollapsed) {
+            if (typeof(Storage) !== 'undefined') {
+                const states = JSON.parse(localStorage.getItem('blockGroupStates') || '{}');
+                states[groupId] = isCollapsed;
+                localStorage.setItem('blockGroupStates', JSON.stringify(states));
+            }
+        }
+        
+        /**
+         * Get block group collapsed state from localStorage
+         * 
+         * @param {string} groupId - Group identifier
+         * @return {boolean} Whether the group is collapsed
+         */
+        function getCollapsedState(groupId) {
+            if (typeof(Storage) !== 'undefined') {
+                const states = JSON.parse(localStorage.getItem('blockGroupStates') || '{}');
+                return states[groupId] === true;
+            }
+            return false;
+        }
         
         /**
          * Analyze usage for all blocks

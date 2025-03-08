@@ -8,10 +8,29 @@
     margin-bottom: 15px;
     font-size: 18px;
     color: #23282d;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+}
+
+.block-group-title:before {
+    content: "\f142";
+    font-family: dashicons;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.block-group-title.collapsed:before {
+    content: "\f140";
 }
 
 .block-group {
     margin-bottom: 30px;
+}
+
+.block-group.collapsed {
+    display: none;
 }
 
 /* Make the table more readable */
@@ -128,10 +147,21 @@
     padding: 8px 0;
     color: #0073aa;
     text-decoration: none;
+    outline: none !important;
 }
 
 .block-title-link:hover {
     color: #00a0d2;
+}
+
+.block-title-link:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.block-row.active td {
+    background-color: #f9fcff;
+    border-left: 4px solid #0073aa;
 }
 
 .sidebar-loading {

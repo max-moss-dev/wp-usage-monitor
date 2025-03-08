@@ -56,11 +56,14 @@ class Block_Usage {
             return;
         }
 
+        // Ensure dashicons are loaded
+        wp_enqueue_style('dashicons');
+        
         // Enqueue styles
         wp_enqueue_style(
             'block-usage-admin',
             plugin_dir_url(__FILE__) . 'assets/css/admin.css',
-            array(),
+            array('dashicons'),
             '1.0.0'
         );
 
