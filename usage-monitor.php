@@ -76,10 +76,10 @@ class Block_Usage {
      */
     public function add_admin_menu() {
         add_management_page(
-            __('Block Usage', 'block-usage'),
-            __('Block Usage', 'block-usage'),
+            __('Block Usage', 'usage-monitor'),
+            __('Block Usage', 'usage-monitor'),
             'manage_options',
-            'block-usage',
+            'usage-monitor',
             array($this, 'render_admin_page')
         );
     }
@@ -89,7 +89,7 @@ class Block_Usage {
      */
     public function enqueue_admin_scripts($hook) {
         // Only load on our admin page
-        if ('tools_page_block-usage' !== $hook) {
+        if ('tools_page_usage-monitor' !== $hook) {
             return;
         }
 
@@ -98,7 +98,7 @@ class Block_Usage {
         
         // Enqueue styles
         wp_enqueue_style(
-            'block-usage-admin',
+            'usage-monitor-admin',
             plugin_dir_url(__FILE__) . 'assets/css/admin.css',
             array('dashicons'),
             '1.0.0'
@@ -106,7 +106,7 @@ class Block_Usage {
 
         // Enqueue scripts
         wp_enqueue_script(
-            'block-usage-admin',
+            'usage-monitor-admin',
             plugin_dir_url(__FILE__) . 'assets/js/admin.js',
             array('jquery'),
             '1.0.0',
@@ -118,7 +118,7 @@ class Block_Usage {
         
         // Localize script with nonce and other data
         wp_localize_script(
-            'block-usage-admin',
+            'usage-monitor-admin',
             'blockUsageData',
             array(
                 'nonce' => wp_create_nonce('block_usage_nonce'),
@@ -454,7 +454,7 @@ class Block_Usage {
                     $type_label = 'Template Part';
                 }
                 
-                $title = $result->post_title ? $result->post_title : __('(No Title)', 'block-usage');
+                $title = $result->post_title ? $result->post_title : __('(No Title)', 'usage-monitor');
                 
                 // Get correct edit URL based on post type
                 $edit_url = get_edit_post_link($result->ID);
@@ -520,7 +520,7 @@ class Block_Usage {
      */
     public function add_plugin_action_links($links) {
         // Add a link to the block usage page
-        $block_usage_link = '<a href="' . admin_url('tools.php?page=block-usage') . '">' . __('View Blocks', 'block-usage') . '</a>';
+        $block_usage_link = '<a href="' . admin_url('tools.php?page=usage-monitor') . '">' . __('View Blocks', 'usage-monitor') . '</a>';
         
         // Add the link at the beginning of the array
         array_unshift($links, $block_usage_link);

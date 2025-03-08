@@ -1,13 +1,13 @@
-<div class="wrap block-usage-container">
-    <div class="block-usage-main">
-        <h1><?php echo esc_html__('Block Usage', 'block-usage'); ?></h1>
+<div class="wrap usage-monitor-container">
+    <div class="usage-monitor-main">
+        <h1><?php echo esc_html__('Block Usage', 'usage-monitor'); ?></h1>
         
         <?php if (empty($blocks)) : ?>
             <div class="notice notice-warning">
-                <p><?php echo esc_html__('No Gutenberg blocks found.', 'block-usage'); ?></p>
+                <p><?php echo esc_html__('No Gutenberg blocks found.', 'usage-monitor'); ?></p>
             </div>
         <?php else : ?>
-            <div class="block-usage-filters">
+            <div class="usage-monitor-filters">
                 <div class="filter-blocks">
                     <span class="filter-label">Filter:</span>
                     <a href="#" class="filter-link active" data-filter="all">All</a> |
@@ -24,7 +24,7 @@
             $scan_needed = $needs_rescan || $no_stats || $was_reactivated;
             ?>
             
-            <div class="block-usage-scan <?php echo $scan_needed ? 'scan-needed' : ''; ?>">
+            <div class="usage-monitor-scan <?php echo $scan_needed ? 'scan-needed' : ''; ?>">
                 <?php if ($scan_needed): ?>
                     <?php if ($needs_rescan): ?>
                     <div class="notice notice-warning inline">
@@ -119,7 +119,10 @@
                 ?>
                 <div class="block-group-container">
                     <h2 class="block-group-title">
-                        <?php echo esc_html(sprintf(__('%s Blocks', 'block-usage'), $display_prefix)); ?>
+                        <?php 
+                        /* translators: %s: Block category or group name */
+                        echo esc_html(sprintf(__('%s Blocks', 'usage-monitor'), $display_prefix)); 
+                        ?>
                         <span class="block-count">
                             <span class="used-count"><?php echo $section_used; ?></span> / <span class="total-count"><?php echo $section_total; ?></span> used
                         </span>
@@ -135,7 +138,10 @@
                         <tbody>
                             <?php if (empty($prefix_blocks)) : ?>
                             <tr>
-                                <td><?php echo esc_html(sprintf(__('No %s blocks found.', 'block-usage'), strtolower($display_prefix))); ?></td>
+                                <td><?php 
+                                /* translators: %s: Block category or group name in lowercase */
+                                echo esc_html(sprintf(__('No %s blocks found.', 'usage-monitor'), strtolower($display_prefix))); 
+                                ?></td>
                             </tr>
                             <?php else : ?>
                                 <?php foreach ($prefix_blocks as $block_name => $block) : ?>
@@ -193,38 +199,38 @@
         
         <!-- Settings section hidden by default -->
         <div class="settings-panel" style="display: none;">
-            <h3><?php echo esc_html__('Plugin Settings', 'block-usage'); ?></h3>
-            <form id="block-usage-settings-form">
+            <h3><?php echo esc_html__('Plugin Settings', 'usage-monitor'); ?></h3>
+            <form id="usage-monitor-settings-form">
                 <div class="form-field">
                     <label>
                         <input type="radio" name="keep_data" value="yes" <?php checked($keep_data, 'yes'); ?>>
-                        <?php echo esc_html__('Keep data when plugin is uninstalled (recommended)', 'block-usage'); ?>
+                        <?php echo esc_html__('Keep data when plugin is uninstalled (recommended)', 'usage-monitor'); ?>
                     </label>
-                    <p class="description"><?php echo esc_html__('Your block usage data will be preserved if you uninstall the plugin.', 'block-usage'); ?></p>
+                    <p class="description"><?php echo esc_html__('Your block usage data will be preserved if you uninstall the plugin.', 'usage-monitor'); ?></p>
                 </div>
                 <div class="form-field">
                     <label>
                         <input type="radio" name="keep_data" value="no" <?php checked($keep_data, 'no'); ?>>
-                        <?php echo esc_html__('Remove all data when plugin is uninstalled', 'block-usage'); ?>
+                        <?php echo esc_html__('Remove all data when plugin is uninstalled', 'usage-monitor'); ?>
                     </label>
-                    <p class="description"><?php echo esc_html__('All block usage data will be permanently deleted when the plugin is uninstalled.', 'block-usage'); ?></p>
+                    <p class="description"><?php echo esc_html__('All block usage data will be permanently deleted when the plugin is uninstalled.', 'usage-monitor'); ?></p>
                 </div>
                 <div class="form-field">
-                    <button type="submit" class="button button-primary"><?php echo esc_html__('Save Settings', 'block-usage'); ?></button>
-                    <span class="settings-saved" style="display:none; color:green; margin-left:10px;"><?php echo esc_html__('Settings saved!', 'block-usage'); ?></span>
+                    <button type="submit" class="button button-primary"><?php echo esc_html__('Save Settings', 'usage-monitor'); ?></button>
+                    <span class="settings-saved" style="display:none; color:green; margin-left:10px;"><?php echo esc_html__('Settings saved!', 'usage-monitor'); ?></span>
                 </div>
             </form>
         </div>
     </div>
     
-    <div class="block-usage-sidebar" style="display: none;">
+    <div class="usage-monitor-sidebar" style="display: none;">
         <div class="sidebar-header">
-            <h3 class="sidebar-title"><?php echo esc_html__('Posts with', 'block-usage'); ?> <span id="selected-block-title"></span></h3>
-            <button class="close-sidebar button"><?php echo esc_html__('Close', 'block-usage'); ?></button>
+            <h3 class="sidebar-title"><?php echo esc_html__('Posts with', 'usage-monitor'); ?> <span id="selected-block-title"></span></h3>
+            <button class="close-sidebar button"><?php echo esc_html__('Close', 'usage-monitor'); ?></button>
         </div>
         <div class="sidebar-content">
             <div class="sidebar-loading" style="display: none;">
-                <span class="spinner is-active"></span> <?php echo esc_html__('Loading...', 'block-usage'); ?>
+                <span class="spinner is-active"></span> <?php echo esc_html__('Loading...', 'usage-monitor'); ?>
             </div>
             <div class="sidebar-results"></div>
         </div>

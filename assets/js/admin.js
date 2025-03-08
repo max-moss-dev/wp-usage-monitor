@@ -7,8 +7,8 @@
 
     // Document ready
     $(document).ready(function() {
-        const $mainContent = $('.block-usage-main');
-        const $sidebar = $('.block-usage-sidebar');
+        const $mainContent = $('.usage-monitor-main');
+        const $sidebar = $('.usage-monitor-sidebar');
         const $sidebarTitle = $('#selected-block-title');
         const $sidebarResults = $('.sidebar-results');
         const $sidebarLoading = $('.sidebar-loading');
@@ -362,7 +362,7 @@
             $('.scan-blocks').on('click', function() {
                 // Show loading indicator
                 $('.scan-blocks').hide();
-                const $scanContainer = $('.block-usage-scan');
+                const $scanContainer = $('.usage-monitor-scan');
                 
                 $scanContainer.html(`
                     <div class="scan-status">
@@ -464,7 +464,7 @@
                 });
                 
                 // Show completion message
-                const $scanContainer = $('.block-usage-scan');
+                const $scanContainer = $('.usage-monitor-scan');
                 $scanContainer.removeClass('scan-needed');
                 $scanContainer.html(`
                     <div class="scan-status-ok">
@@ -572,6 +572,7 @@
             // Apply filtering as normal
             var filterType = $(this).data('filter');
             filterBlocksByUsage(filterType);
+            filterSectionsByUsage(filterType);
             
             // Update URL hash
             window.location.hash = filterType;
@@ -591,7 +592,7 @@
         checkUrlHash();
         
         // Handle settings form submission
-        $('#block-usage-settings-form').on('submit', function(e) {
+        $('#usage-monitor-settings-form').on('submit', function(e) {
             e.preventDefault();
             
             var keepData = $('input[name="keep_data"]:checked').val();

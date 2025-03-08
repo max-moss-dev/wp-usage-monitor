@@ -35,7 +35,7 @@ Block Usage automatically detects when content changes and alerts you when stati
 
 == Installation ==
 
-1. Upload the `block-usage` folder to the `/wp-content/plugins/` directory
+1. Upload the `usage-monitor` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to Tools → Block Usage to view your block statistics
 

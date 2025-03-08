@@ -72,25 +72,25 @@
     background-color: #f0f0f0;
 }
 
-.block-usage-container {
+.usage-monitor-container {
     display: flex;
     position: relative;
 }
 
-.block-usage-main {
+.usage-monitor-main {
     flex: 1;
     transition: margin-right 0.3s ease;
 }
 
-.block-usage-main a {
+.usage-monitor-main a {
     box-shadow: none;
 }
 
-.block-usage-main.with-sidebar {
+.usage-monitor-main.with-sidebar {
     margin-right: 350px;
 }
 
-.block-usage-sidebar {
+.usage-monitor-sidebar {
     position: fixed;
     right: 0;
     top: 32px;
@@ -105,7 +105,7 @@
     box-sizing: border-box;
 }
 
-.block-usage-sidebar a {
+.usage-monitor-sidebar a {
     box-shadow: none;
 }
 
@@ -191,24 +191,24 @@
 }
 
 /* Filter styles */
-.block-usage-filters {
+.usage-monitor-filters {
     margin: 15px 0 25px;
 }
 
-.block-usage-filters .subsubsub {
+.usage-monitor-filters .subsubsub {
     margin: 0 0 8px;
 }
 
-.block-usage-filters .subsubsub li {
+.usage-monitor-filters .subsubsub li {
     margin: 0 10px 0 0;
 }
 
-.block-usage-filters .usage-filter {
+.usage-monitor-filters .usage-filter {
     padding: 2px 5px;
     text-decoration: none;
 }
 
-.block-usage-filters .usage-filter.current {
+.usage-monitor-filters .usage-filter.current {
     font-weight: 600;
     background: #f0f0f0;
     border-radius: 3px;
@@ -293,7 +293,7 @@
 }
 
 /* Scan button styling */
-.block-usage-scan {
+.usage-monitor-scan {
     margin: 20px 0;
     padding: 15px;
     background: #f9f9f9;
@@ -301,7 +301,7 @@
     display: none;
 }
 
-.block-usage-scan.scan-needed {
+.usage-monitor-scan.scan-needed {
     display: block;
     background: #fffbe5;
     border-left: 4px solid #dba617;
@@ -370,7 +370,7 @@
     border-top: 1px solid #eee;
 }
 
-.block-usage-scan .notice {
+.usage-monitor-scan .notice {
     margin: 0 0 15px 0;
 }
 
