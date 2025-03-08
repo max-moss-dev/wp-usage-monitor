@@ -1,0 +1,55 @@
+/**
+ * Block Usage Admin Styles
+ */
+
+/* Block group styles */
+.block-group-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #23282d;
+}
+
+.block-group {
+    margin-bottom: 30px;
+}
+
+/* Make the table more readable */
+.wp-list-table th {
+    font-weight: 600;
+}
+
+.wp-list-table td {
+    vertical-align: top;
+    padding: 12px;
+}
+
+/* Style for block name column */
+.wp-list-table td:first-child {
+    font-weight: 500;
+    color: #23282d;
+}
+
+/* Block group hover styling */
+.wp-list-table tr:hover td {
+    background-color: #f7f7f7;
+}
+
+/* Specific styling for common block types */
+.core-blocks tr:hover td {
+    background-color: #f0f6fc;
+}
+
+.wp-blocks tr:hover td {
+    background-color: #f7fafd;
+}
+
+.woocommerce-blocks tr:hover td {
+    background-color: #f6f7f7;
+}
+
+/* Expanded row styling for when a row is clicked */
+.wp-list-table tr.expanded td {
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e5e5e5;
+}
