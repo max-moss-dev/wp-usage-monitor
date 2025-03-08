@@ -159,6 +159,9 @@ class Block_Usage {
         
         // Get all stats from database
         $stats = array();
+        
+        // Table names can't be properly prepared, so we use interpolation with phpcs ignore
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $results = $wpdb->get_results("SELECT block_name, usage_count FROM {$this->table_name}");
         
         if ($results) {
@@ -199,20 +202,6 @@ class Block_Usage {
         // Get stored usage stats
         $block_usage_stats = $this->get_block_usage_stats();
         
-        // Check if content has been updated since last scan
-        $last_scan = get_option('block_usage_last_scan', 0);
-        $last_update = get_option('block_usage_content_updated', 0);
-        $needs_rescan = ($last_update > $last_scan);
-        
-        // Check if plugin was deactivated and reactivated since last scan
-        $activation_time = get_option('block_usage_activation_time', 0);
-        $deactivation_time = get_option('block_usage_deactivation_time', 0);
-        $was_reactivated = ($activation_time > $last_scan && $deactivation_time > 0);
-        
-        // Get data retention setting
-        $keep_data = get_option('usage_monitor_keep_data', 'yes');
-        
-        // Start output buffering
         ob_start();
         
         // Include the admin view
@@ -267,13 +256,13 @@ class Block_Usage {
      */
     public function save_settings() {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'block_usage_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'block_usage_nonce')) {
             wp_send_json_error(array('message' => 'Invalid security token.'));
             return;
         }
         
         // Get and sanitize keep_data setting
-        $keep_data = isset($_POST['keep_data']) ? sanitize_text_field($_POST['keep_data']) : 'yes';
+        $keep_data = isset($_POST['keep_data']) ? sanitize_text_field(wp_unslash($_POST['keep_data'])) : 'yes';
         
         // Update option
         update_option('usage_monitor_keep_data', $keep_data);
@@ -286,21 +275,21 @@ class Block_Usage {
      */
     public function find_posts_with_block() {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'block_usage_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'block_usage_nonce')) {
             wp_send_json_error(array('message' => 'Invalid security token.'));
             return;
         }
         
         // Get parameters
-        $block_name = isset($_POST['block_name']) ? sanitize_text_field($_POST['block_name']) : '';
-        $search_pattern = isset($_POST['search_pattern']) ? sanitize_text_field($_POST['search_pattern']) : '';
+        $block_name = isset($_POST['block_name']) ? sanitize_text_field(wp_unslash($_POST['block_name'])) : '';
+        $search_pattern = isset($_POST['search_pattern']) ? sanitize_text_field(wp_unslash($_POST['search_pattern'])) : '';
         
         if (empty($block_name) || empty($search_pattern)) {
             wp_send_json_error(array('message' => 'Missing required parameters.'));
             return;
         }
         
-        // Get posts with this block
+        // Get posts containing the block
         $posts = $this->get_posts_with_block($search_pattern);
         
         wp_send_json_success(array(
@@ -317,14 +306,14 @@ class Block_Usage {
         global $wpdb;
         
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'block_usage_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'block_usage_nonce')) {
             wp_send_json_error(array('message' => 'Invalid security token.'));
             return;
         }
         
         // Get parameters
-        $block_name = isset($_POST['block_name']) ? sanitize_text_field($_POST['block_name']) : '';
-        $search_pattern = isset($_POST['search_pattern']) ? sanitize_text_field($_POST['search_pattern']) : '';
+        $block_name = isset($_POST['block_name']) ? sanitize_text_field(wp_unslash($_POST['block_name'])) : '';
+        $search_pattern = isset($_POST['search_pattern']) ? sanitize_text_field(wp_unslash($_POST['search_pattern'])) : '';
         
         if (empty($block_name)) {
             wp_send_json_error(array('message' => 'Missing required parameters.'));
@@ -344,26 +333,27 @@ class Block_Usage {
         $like_pattern = '%' . $wpdb->esc_like($block_pattern) . '%';
         
         // Direct database query to count all instances (posts and templates)
-        $query = $wpdb->prepare(
-            "SELECT COUNT(ID) FROM {$wpdb->posts} 
-            WHERE post_status = 'publish' 
-            AND post_content LIKE %s",
-            $like_pattern
+        $usage_count = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(ID) FROM {$wpdb->posts} 
+                WHERE post_status = 'publish' 
+                AND post_content LIKE %s",
+                $like_pattern
+            )
         );
-        
-        $usage_count = (int) $wpdb->get_var($query);
         
         // Get a breakdown of where the block is used
-        $breakdown_query = $wpdb->prepare(
-            "SELECT post_type, COUNT(*) as count 
-            FROM {$wpdb->posts} 
-            WHERE post_status = 'publish' 
-            AND post_content LIKE %s 
-            GROUP BY post_type",
-            $like_pattern
+        $usage_breakdown = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_type, COUNT(*) as count 
+                FROM {$wpdb->posts} 
+                WHERE post_status = 'publish' 
+                AND post_content LIKE %s 
+                GROUP BY post_type",
+                $like_pattern
+            )
         );
         
-        $usage_breakdown = $wpdb->get_results($breakdown_query);
         $breakdown_data = array();
         
         if ($usage_breakdown) {
@@ -462,18 +452,19 @@ class Block_Usage {
         $like_pattern = '%' . $wpdb->esc_like($block_comment) . '%';
         
         // Direct database query to search posts and templates
-        $query = $wpdb->prepare(
-            "SELECT ID, post_title, post_type 
-            FROM {$wpdb->posts} 
-            WHERE post_status = 'publish' 
-            AND post_content LIKE %s
-            ORDER BY post_type, post_title
-            LIMIT %d",
-            $like_pattern,
-            $limit
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT ID, post_title, post_type 
+                FROM {$wpdb->posts} 
+                WHERE post_status = 'publish' 
+                AND post_content LIKE %s
+                ORDER BY post_type, post_title
+                LIMIT %d",
+                $like_pattern,
+                $limit
+            )
         );
         
-        $results = $wpdb->get_results($query);
         $posts = array();
         
         if ($results) {
@@ -570,7 +561,7 @@ class Block_Usage {
      */
     public function record_scan_timestamp() {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'block_usage_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'block_usage_nonce')) {
             wp_send_json_error(array('message' => 'Invalid security token.'));
             return;
         }

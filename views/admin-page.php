@@ -1,3 +1,17 @@
+<?php 
+    // Check if content has been updated since last scan
+    $last_scan = get_option('block_usage_last_scan', 0);
+    $last_update = get_option('block_usage_content_updated', 0);
+    $needs_rescan = ($last_update > $last_scan);
+    
+    // Check if plugin was deactivated and reactivated since last scan
+    $activation_time = get_option('block_usage_activation_time', 0);
+    $deactivation_time = get_option('block_usage_deactivation_time', 0);
+    $was_reactivated = ($activation_time > $last_scan && $deactivation_time > 0);
+    
+    // Get data retention setting
+    $keep_data = get_option('usage_monitor_keep_data', 'yes');
+?>
 <div class="wrap usage-monitor-container">
     <div class="usage-monitor-main">
         <h1><?php echo esc_html__('Block Usage', 'usage-monitor'); ?></h1>
