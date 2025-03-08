@@ -277,11 +277,15 @@
 
 /* Scan button styling */
 .block-usage-scan {
-    margin: 15px 0 20px;
+    margin: 20px 0;
     padding: 15px;
-    background: #fff;
-    border: 1px solid #c3c4c7;
-    border-radius: 4px;
+    background: #f9f9f9;
+    border-radius: 3px;
+}
+
+.block-usage-scan.scan-needed {
+    background: #fffbe5;
+    border-left: 4px solid #dba617;
 }
 
 .scan-progress-bar-container {
@@ -314,16 +318,41 @@
 }
 
 .scan-description {
-    margin-top: 10px;
-    color: #646970;
-    font-style: italic;
+    color: #666;
     font-size: 13px;
+    font-style: italic;
+    margin-top: 8px;
 }
 
-.scan-last-run {
-    font-size: 12px;
-    color: #646970;
-    margin-bottom: 10px;
+.scan-status-ok {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.scan-status-ok .dashicons {
+    color: #46b450;
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.scan-status-ok .scan-last-run {
+    margin-right: 15px;
+}
+
+.scan-toggle {
+    margin-left: auto;
+}
+
+.scan-again-container {
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.block-usage-scan .notice {
+    margin: 0 0 15px 0;
 }
 
 /* Block groups */

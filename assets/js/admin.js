@@ -326,13 +326,13 @@
         }
         
         /**
-         * Initialize the block usage table
+         * Initialize block usage table and functionality
          */
         function initBlockUsageTable() {
             // Initialize collapsible block groups
             initCollapseGroups();
             
-            // Set initial filter counts
+            // Set initial filter counts based on existing data
             updateFilterCounts();
             
             // Add click handler for filter links
@@ -346,6 +346,12 @@
             $('.close-sidebar').on('click', function() {
                 $mainContent.removeClass('with-sidebar');
                 $sidebar.hide();
+            });
+            
+            // Add click handler for "Scan Again" toggle
+            $('.scan-toggle').on('click', function(e) {
+                e.preventDefault();
+                $('.scan-again-container').slideToggle(200);
             });
             
             // Add click handler for scan button
@@ -392,83 +398,7 @@
                 let processedBlocks = 0;
                 
                 // Process blocks in batches
-                processScanBatch(blocks, 0, 5);
-                
-                /**
-                 * Process a batch of blocks for the full scan
-                 */
-                function processScanBatch(blocks, startIndex, batchSize) {
-                    if (startIndex >= blocks.length) {
-                        // All blocks processed, update the UI
-                        updateFilterCounts();
-                        
-                        // Show completion message
-                        $scanContainer.html(`
-                            <div class="notice notice-success">
-                                <p>Scan completed successfully! ${processedBlocks} blocks analyzed.</p>
-                            </div>
-                            <div class="scan-last-run">
-                                Last scan: just now
-                            </div>
-                            <button type="button" class="button button-secondary scan-blocks">
-                                Scan All Blocks
-                            </button>
-                            <p class="scan-description">
-                                This will scan your content and calculate accurate usage statistics for all blocks.
-                            </p>
-                        `);
-                        
-                        // Re-attach click handler
-                        $('.scan-blocks').on('click', function() {
-                            $(this).trigger('click');
-                        });
-                        
-                        return;
-                    }
-                    
-                    const endIndex = Math.min(startIndex + batchSize, blocks.length);
-                    const batch = blocks.slice(startIndex, endIndex);
-                    let batchCompleted = 0;
-                    
-                    // Process each block in the batch
-                    batch.forEach(function(block) {
-                        // Use the working method from the filter functionality
-                        checkBlockUsage(block.blockName, block.searchPattern, function(isUsed, usageCount) {
-                            // Update the UI with the result
-                            block.element.attr('data-usage-status', isUsed ? 'used' : 'unused');
-                            
-                            // Update usage count display
-                            const $countCell = block.element.find('.usage-count-cell');
-                            $countCell.html(`<span class="usage-count">${usageCount}</span>`);
-                            
-                            // Apply appropriate class based on count
-                            const $count = $countCell.find('.usage-count');
-                            if (usageCount > 10) {
-                                $count.attr('data-count', 'high');
-                            } else if (usageCount > 0) {
-                                $count.attr('data-count', 'medium');
-                            } else {
-                                $count.attr('data-count', 'low');
-                            }
-                            
-                            // Update completion status
-                            processedBlocks++;
-                            batchCompleted++;
-                            
-                            // Update progress bar
-                            const percentage = Math.round((processedBlocks / totalBlocks) * 100);
-                            $('.scan-percentage').text(percentage + '%');
-                            $('.scan-progress-bar').css('width', percentage + '%');
-                            
-                            // If all in this batch are done, process next batch
-                            if (batchCompleted === batch.length) {
-                                setTimeout(function() {
-                                    processScanBatch(blocks, endIndex, batchSize);
-                                }, 100); // Small delay to avoid overloading the server
-                            }
-                        });
-                    });
-                }
+                processScanBatch(blocks, 0, 5, processedBlocks, totalBlocks);
             });
             
             // Initialize filter links with stored data
@@ -503,6 +433,102 @@
                     $title.addClass('collapsed');
                     $title.closest('.block-group').find('tbody').addClass('collapsed');
                 }
+            });
+        }
+        
+        /**
+         * Process a batch of blocks for the full scan
+         */
+        function processScanBatch(blocks, startIndex, batchSize, processedBlocks, totalBlocks) {
+            if (startIndex >= blocks.length) {
+                // All blocks processed, update the UI
+                updateFilterCounts();
+                
+                // Record scan timestamp
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'block_usage_record_scan',
+                        nonce: blockUsageData.nonce
+                    }
+                });
+                
+                // Show completion message
+                const $scanContainer = $('.block-usage-scan');
+                $scanContainer.removeClass('scan-needed');
+                $scanContainer.html(`
+                    <div class="scan-status-ok">
+                        <span class="dashicons dashicons-yes-alt"></span>
+                        <span class="scan-last-run">
+                            Statistics up to date. Last scan: just now
+                        </span>
+                        <button type="button" class="button button-secondary scan-toggle">Scan Again</button>
+                        <div class="scan-again-container" style="display: none;">
+                            <button type="button" class="button button-secondary scan-blocks">
+                                Scan All Blocks
+                            </button>
+                            <p class="scan-description">
+                                This will scan your content and calculate accurate usage statistics for all blocks.
+                            </p>
+                        </div>
+                    </div>
+                `);
+                
+                // Re-attach event handlers
+                $('.scan-toggle').on('click', function(e) {
+                    e.preventDefault();
+                    $('.scan-again-container').slideToggle(200);
+                });
+                
+                $('.scan-blocks').on('click', function() {
+                    $(this).trigger('click');
+                });
+                
+                return;
+            }
+            
+            const endIndex = Math.min(startIndex + batchSize, blocks.length);
+            const batch = blocks.slice(startIndex, endIndex);
+            let batchCompleted = 0;
+            
+            // Process each block in the batch
+            batch.forEach(function(block) {
+                // Use the working method from the filter functionality
+                checkBlockUsage(block.blockName, block.searchPattern, function(isUsed, usageCount) {
+                    // Update the UI with the result
+                    block.element.attr('data-usage-status', isUsed ? 'used' : 'unused');
+                    
+                    // Update usage count display
+                    const $countCell = block.element.find('.usage-count-cell');
+                    $countCell.html(`<span class="usage-count">${usageCount}</span>`);
+                    
+                    // Apply appropriate class based on count
+                    const $count = $countCell.find('.usage-count');
+                    if (usageCount > 10) {
+                        $count.attr('data-count', 'high');
+                    } else if (usageCount > 0) {
+                        $count.attr('data-count', 'medium');
+                    } else {
+                        $count.attr('data-count', 'low');
+                    }
+                    
+                    // Update completion status
+                    processedBlocks++;
+                    batchCompleted++;
+                    
+                    // Update progress bar
+                    const percentage = Math.round((processedBlocks / totalBlocks) * 100);
+                    $('.scan-percentage').text(percentage + '%');
+                    $('.scan-progress-bar').css('width', percentage + '%');
+                    
+                    // If all in this batch are done, process next batch
+                    if (batchCompleted === batch.length) {
+                        setTimeout(function() {
+                            processScanBatch(blocks, endIndex, batchSize, processedBlocks, totalBlocks);
+                        }, 100); // Small delay to avoid overloading the server
+                    }
+                });
             });
         }
     });

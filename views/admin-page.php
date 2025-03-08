@@ -16,13 +16,55 @@
                 </div>
             </div>
             
-            <div class="block-usage-scan">
-                <button type="button" class="button button-secondary scan-blocks">
-                    Scan All Blocks
-                </button>
-                <p class="scan-description">
-                    This will scan your content and calculate accurate usage statistics for all blocks.
-                </p>
+            <?php 
+            // Check if scan is needed (content updated since last scan or no stats available)
+            $no_stats = empty($block_usage_stats);
+            $scan_needed = $needs_rescan || $no_stats;
+            ?>
+            
+            <div class="block-usage-scan <?php echo $scan_needed ? 'scan-needed' : ''; ?>">
+                <?php if ($scan_needed): ?>
+                    <?php if ($needs_rescan): ?>
+                    <div class="notice notice-warning inline">
+                        <p>
+                            <strong>Content has been updated since the last scan.</strong> 
+                            The usage statistics may be outdated.
+                        </p>
+                    </div>
+                    <?php elseif ($no_stats): ?>
+                    <div class="notice notice-info inline">
+                        <p>
+                            <strong>No usage statistics available yet.</strong> 
+                            Run a scan to analyze which blocks are being used.
+                        </p>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <button type="button" class="button button-primary scan-blocks">
+                        Scan All Blocks
+                    </button>
+                    <p class="scan-description">
+                        This will scan your content and calculate accurate usage statistics for all blocks.
+                    </p>
+                <?php else: ?>
+                    <?php if (isset($last_scan) && $last_scan > 0): ?>
+                    <div class="scan-status-ok">
+                        <span class="dashicons dashicons-yes-alt"></span>
+                        <span class="scan-last-run">
+                            Statistics up to date. Last scan: <?php echo esc_html(human_time_diff($last_scan, time())); ?> ago
+                        </span>
+                        <button type="button" class="button button-secondary scan-toggle">Scan Again</button>
+                        <div class="scan-again-container" style="display: none;">
+                            <button type="button" class="button button-secondary scan-blocks">
+                                Scan All Blocks
+                            </button>
+                            <p class="scan-description">
+                                This will scan your content and calculate accurate usage statistics for all blocks.
+                            </p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                <?php endif; ?>
             </div>
             
             <?php 

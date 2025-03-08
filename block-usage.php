@@ -44,6 +44,10 @@ class Block_Usage {
         // AJAX handlers
         add_action('wp_ajax_block_usage_find_posts', array($this, 'find_posts_with_block'));
         add_action('wp_ajax_block_usage_check_usage', array($this, 'check_block_usage'));
+        add_action('wp_ajax_block_usage_record_scan', array($this, 'record_scan_timestamp'));
+        
+        // Track content updates
+        add_action('save_post', array($this, 'track_content_update'), 10, 3);
     }
 
     /**
@@ -146,14 +150,38 @@ class Block_Usage {
     }
 
     /**
+     * Track when content is updated to notify about potential outdated stats
+     *
+     * @param int    $post_id The ID of the post being saved
+     * @param object $post    The post object
+     * @param bool   $update  Whether this is an existing post being updated
+     */
+    public function track_content_update($post_id, $post, $update) {
+        // Skip if autosave, revision, or certain post types
+        if (wp_is_post_autosave($post_id) || 
+            wp_is_post_revision($post_id) || 
+            in_array($post->post_type, array('attachment', 'nav_menu_item', 'custom_css', 'customize_changeset'))) {
+            return;
+        }
+        
+        // Store the timestamp of the last content update
+        update_option('block_usage_content_updated', time());
+    }
+
+    /**
      * Render admin page
      */
-    public function render_admin_page()  {
+    public function render_admin_page() {
         // Get all registered blocks
         $blocks = $this->get_registered_blocks();
         
         // Get stored usage stats
         $block_usage_stats = $this->get_block_usage_stats();
+        
+        // Check if content has been updated since last scan
+        $last_scan = get_option('block_usage_last_scan', 0);
+        $last_update = get_option('block_usage_content_updated', 0);
+        $needs_rescan = ($last_update > $last_scan);
         
         // Start output buffering
         ob_start();
@@ -450,6 +478,22 @@ class Block_Usage {
         array_unshift($links, $block_usage_link);
         
         return $links;
+    }
+
+    /**
+     * Record when a scan was completed
+     */
+    public function record_scan_timestamp() {
+        // Verify nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'block_usage_nonce')) {
+            wp_send_json_error(array('message' => 'Invalid security token.'));
+            return;
+        }
+        
+        // Update the scan timestamp
+        update_option('block_usage_last_scan', time());
+        
+        wp_send_json_success(array('message' => 'Scan timestamp recorded.'));
     }
 }
 
