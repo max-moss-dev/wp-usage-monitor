@@ -215,3 +215,162 @@
 .block-row[data-usage-status="unused"] {
     opacity: 0.6;
 }
+
+/* Usage count styling */
+.usage-count-column {
+    width: 120px;
+    text-align: center;
+}
+
+.usage-count-cell {
+    text-align: center;
+}
+
+.usage-count {
+    display: inline-block;
+    min-width: 30px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.usage-count[data-count="high"] {
+    background-color: #d4f4e2;
+    color: #0a6b3b;
+}
+
+.usage-count[data-count="medium"] {
+    background-color: #f0f6fa;
+    color: #2271b1;
+}
+
+.usage-count[data-count="low"] {
+    background-color: #f6f7f7;
+    color: #787c82;
+}
+
+.usage-count-placeholder {
+    color: #c3c4c7;
+    font-style: italic;
+}
+
+/* Filter styles */
+.filter-blocks {
+    margin-bottom: 20px;
+}
+
+.filter-label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.filter-link {
+    text-decoration: none;
+    padding: 0 5px;
+}
+
+.filter-link.active {
+    color: #000;
+    font-weight: bold;
+}
+
+/* Scan button styling */
+.block-usage-scan {
+    margin: 15px 0 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+}
+
+.scan-progress-bar-container {
+    height: 10px;
+    background-color: #f6f7f7;
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.scan-progress-bar {
+    height: 100%;
+    background-color: #2271b1;
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.scan-progress-text {
+    margin: 5px 0;
+}
+
+.scan-status {
+    display: flex;
+    flex-direction: column;
+}
+
+.scan-status .spinner {
+    float: none;
+    margin: 0 0 10px;
+}
+
+.scan-description {
+    margin-top: 10px;
+    color: #646970;
+    font-style: italic;
+    font-size: 13px;
+}
+
+.scan-last-run {
+    font-size: 12px;
+    color: #646970;
+    margin-bottom: 10px;
+}
+
+/* Block groups */
+.block-group td {
+    background-color: #f6f7f7;
+    padding: 8px 12px;
+    font-weight: bold;
+}
+
+.block-count {
+    margin-left: 10px;
+    font-weight: normal;
+    color: #646970;
+    font-size: 12px;
+}
+
+/* Sidebar post type groups */
+.post-type-group {
+    margin-bottom: 20px;
+}
+
+.post-type-heading {
+    margin: 0 0 10px;
+    padding: 5px 0;
+    font-size: 14px;
+    color: #1d2327;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.post-type-group ul {
+    margin: 0;
+    padding: 0;
+}
+
+.post-type-group li {
+    margin-bottom: 8px;
+    padding-left: 10px;
+    border-left: 3px solid #e2e4e7;
+}
+
+.post-type-group li a {
+    display: block;
+    color: #2271b1;
+    text-decoration: none;
+}
+
+.post-type-group li a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
