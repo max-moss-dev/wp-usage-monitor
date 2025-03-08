@@ -161,7 +161,7 @@ class Block_Usage {
         $stats = array();
         
         // Table names can't be properly prepared, so we use interpolation with phpcs ignore
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $results = $wpdb->get_results("SELECT block_name, usage_count FROM {$this->table_name}");
         
         if ($results) {
@@ -333,6 +333,7 @@ class Block_Usage {
         $like_pattern = '%' . $wpdb->esc_like($block_pattern) . '%';
         
         // Direct database query to count all instances (posts and templates)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $usage_count = (int) $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT COUNT(ID) FROM {$wpdb->posts} 
@@ -343,6 +344,7 @@ class Block_Usage {
         );
         
         // Get a breakdown of where the block is used
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $usage_breakdown = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT post_type, COUNT(*) as count 
@@ -393,6 +395,7 @@ class Block_Usage {
         global $wpdb;
         
         // Check if table exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $table_exists = $wpdb->get_var($wpdb->prepare(
             "SHOW TABLES LIKE %s",
             $this->table_name
@@ -426,6 +429,7 @@ class Block_Usage {
         global $wpdb;
         
         // Update or insert the block usage data
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $wpdb->replace(
             $this->table_name,
             array(
@@ -452,6 +456,7 @@ class Block_Usage {
         $like_pattern = '%' . $wpdb->esc_like($block_comment) . '%';
         
         // Direct database query to search posts and templates
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT ID, post_title, post_type 
@@ -492,6 +497,7 @@ class Block_Usage {
                     // For site editor, we need to extract the template slug parts
                     
                     // Get raw data from database to ensure we get the real slug
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                     $template_data = $wpdb->get_row(
                         $wpdb->prepare(
                             "SELECT post_name, post_content FROM {$wpdb->posts} WHERE ID = %d",
