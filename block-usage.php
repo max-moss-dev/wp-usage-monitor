@@ -14,6 +14,26 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Register activation and deactivation hooks
+register_activation_hook(__FILE__, 'block_usage_activated');
+register_deactivation_hook(__FILE__, 'block_usage_deactivated');
+
+/**
+ * Record plugin activation time
+ */
+function block_usage_activated() {
+    // Store activation time
+    update_option('block_usage_activation_time', time());
+}
+
+/**
+ * Record plugin deactivation time
+ */
+function block_usage_deactivated() {
+    // Store deactivation time
+    update_option('block_usage_deactivation_time', time());
+}
+
 /**
  * Main Block Usage class
  */
@@ -182,6 +202,11 @@ class Block_Usage {
         $last_scan = get_option('block_usage_last_scan', 0);
         $last_update = get_option('block_usage_content_updated', 0);
         $needs_rescan = ($last_update > $last_scan);
+        
+        // Check if plugin was deactivated and reactivated since last scan
+        $activation_time = get_option('block_usage_activation_time', 0);
+        $deactivation_time = get_option('block_usage_deactivation_time', 0);
+        $was_reactivated = ($activation_time > $last_scan && $deactivation_time > 0);
         
         // Start output buffering
         ob_start();
@@ -492,6 +517,10 @@ class Block_Usage {
         
         // Update the scan timestamp
         update_option('block_usage_last_scan', time());
+        
+        // Clear activation notice after a successful scan
+        // We keep the deactivation time for future comparisons
+        update_option('block_usage_activation_time', 0);
         
         wp_send_json_success(array('message' => 'Scan timestamp recorded.'));
     }

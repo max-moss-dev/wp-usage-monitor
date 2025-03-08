@@ -17,9 +17,9 @@
             </div>
             
             <?php 
-            // Check if scan is needed (content updated since last scan or no stats available)
+            // Check if scan is needed (content updated since last scan, plugin reactivated, or no stats available)
             $no_stats = empty($block_usage_stats);
-            $scan_needed = $needs_rescan || $no_stats;
+            $scan_needed = $needs_rescan || $no_stats || $was_reactivated;
             ?>
             
             <div class="block-usage-scan <?php echo $scan_needed ? 'scan-needed' : ''; ?>">
@@ -29,6 +29,13 @@
                         <p>
                             <strong>Content has been updated since the last scan.</strong> 
                             The usage statistics may be outdated.
+                        </p>
+                    </div>
+                    <?php elseif ($was_reactivated): ?>
+                    <div class="notice notice-warning inline">
+                        <p>
+                            <strong>Plugin was deactivated and reactivated since the last scan.</strong> 
+                            Content changes may have occurred while the plugin was inactive.
                         </p>
                     </div>
                     <?php elseif ($no_stats): ?>
