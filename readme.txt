@@ -1,6 +1,6 @@
 === Usage Monitor ===
 Contributors: zenblocks
-Tags: blocks, gutenberg, usage, analytics, admin, editor
+Tags: blocks, gutenberg, usage, analytics, admin
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4

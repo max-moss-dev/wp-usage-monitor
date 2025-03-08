@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Block Usage Monitor
+ * Plugin Name: Usage Monitor
  * Description: Track and analyze Gutenberg block usage across your entire WordPress site. Find which blocks are used where.
  * Version: 1.0.0
  * Author: Max Moss

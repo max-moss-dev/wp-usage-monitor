@@ -366,7 +366,6 @@
                 
                 $scanContainer.html(`
                     <div class="scan-status">
-                        <span class="spinner is-active"></span>
                         <div class="scan-progress-text">
                             Scanning blocks usage... <span class="scan-percentage">0%</span>
                         </div>
