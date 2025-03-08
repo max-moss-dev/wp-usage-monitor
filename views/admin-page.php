@@ -13,6 +13,8 @@
                     <a href="#" class="filter-link active" data-filter="all">All</a> |
                     <a href="#" class="filter-link" data-filter="used">Used</a> |
                     <a href="#" class="filter-link" data-filter="unused">Unused</a>
+                    <span class="separator">|</span>
+                    <a href="#" class="settings-link" data-tab="settings">Settings</a>
                 </div>
             </div>
             
@@ -188,6 +190,31 @@
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
+        
+        <!-- Settings section hidden by default -->
+        <div class="settings-panel" style="display: none;">
+            <h3><?php echo esc_html__('Plugin Settings', 'block-usage'); ?></h3>
+            <form id="block-usage-settings-form">
+                <div class="form-field">
+                    <label>
+                        <input type="radio" name="keep_data" value="yes" <?php checked($keep_data, 'yes'); ?>>
+                        <?php echo esc_html__('Keep data when plugin is uninstalled (recommended)', 'block-usage'); ?>
+                    </label>
+                    <p class="description"><?php echo esc_html__('Your block usage data will be preserved if you uninstall the plugin.', 'block-usage'); ?></p>
+                </div>
+                <div class="form-field">
+                    <label>
+                        <input type="radio" name="keep_data" value="no" <?php checked($keep_data, 'no'); ?>>
+                        <?php echo esc_html__('Remove all data when plugin is uninstalled', 'block-usage'); ?>
+                    </label>
+                    <p class="description"><?php echo esc_html__('All block usage data will be permanently deleted when the plugin is uninstalled.', 'block-usage'); ?></p>
+                </div>
+                <div class="form-field">
+                    <button type="submit" class="button button-primary"><?php echo esc_html__('Save Settings', 'block-usage'); ?></button>
+                    <span class="settings-saved" style="display:none; color:green; margin-left:10px;"><?php echo esc_html__('Settings saved!', 'block-usage'); ?></span>
+                </div>
+            </form>
+        </div>
     </div>
     
     <div class="block-usage-sidebar" style="display: none;">

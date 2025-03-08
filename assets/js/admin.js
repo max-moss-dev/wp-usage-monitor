@@ -444,9 +444,15 @@
          * Process a batch of blocks for the full scan
          */
         function processScanBatch(blocks, startIndex, batchSize, processedBlocks, totalBlocks) {
+            // Disable filter buttons during scanning
+            $('.filter-link, .settings-link').css('pointer-events', 'none').addClass('disabled');
+            
             if (startIndex >= blocks.length) {
                 // All blocks processed, update the UI
                 updateFilterCounts();
+                
+                // Re-enable filter buttons
+                $('.filter-link, .settings-link').css('pointer-events', 'auto').removeClass('disabled');
                 
                 // Record scan timestamp
                 $.ajax({
@@ -535,5 +541,76 @@
                 });
             });
         }
+
+        // Handle settings tab
+        $('.settings-link').on('click', function(e) {
+            e.preventDefault();
+            
+            // Toggle active class for settings link
+            $('.filter-link').removeClass('active');
+            $(this).addClass('active');
+            
+            // Hide all block groups and show settings panel
+            $('.block-group-container').hide();
+            $('.settings-panel').show();
+            
+            // Update URL hash
+            window.location.hash = 'settings';
+        });
+        
+        // Handle filter links with settings tab awareness
+        $('.filter-link').on('click', function(e) {
+            e.preventDefault();
+            
+            // Update active state
+            $('.filter-link, .settings-link').removeClass('active');
+            $(this).addClass('active');
+            
+            // Show block groups and hide settings
+            $('.block-group-container').show();
+            $('.settings-panel').hide();
+            
+            // Apply filtering as normal
+            var filterType = $(this).data('filter');
+            filterBlocksByUsage(filterType);
+            
+            // Update URL hash
+            window.location.hash = filterType;
+        });
+        
+        // Check URL hash on page load
+        function checkUrlHash() {
+            var hash = window.location.hash.substring(1);
+            if (hash === 'settings') {
+                $('.settings-link').trigger('click');
+            } else if (['all', 'used', 'unused'].indexOf(hash) >= 0) {
+                $('.filter-link[data-filter="' + hash + '"]').trigger('click');
+            }
+        }
+        
+        // Check hash on page load
+        checkUrlHash();
+        
+        // Handle settings form submission
+        $('#block-usage-settings-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            var keepData = $('input[name="keep_data"]:checked').val();
+            
+            $.ajax({
+                url: blockUsageData.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'block_usage_save_settings',
+                    nonce: blockUsageData.nonce,
+                    keep_data: keepData
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('.settings-saved').fadeIn().delay(2000).fadeOut();
+                    }
+                }
+            });
+        });
     });
 })(jQuery);

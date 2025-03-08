@@ -1,4 +1,4 @@
-=== Block Usage ===
+=== Usage Monitor ===
 Contributors: zenblocks
 Tags: blocks, gutenberg, usage, analytics, admin, editor
 Requires at least: 5.8

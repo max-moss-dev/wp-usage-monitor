@@ -283,7 +283,13 @@
 
 .filter-link.active {
     color: #000;
-    font-weight: bold;
+    font-weight: 600;
+}
+
+.filter-link.disabled, 
+.settings-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Scan button styling */
@@ -426,4 +432,44 @@
 .post-type-group li a:hover {
     color: #135e96;
     text-decoration: underline;
+}
+
+/* Settings section */
+.settings-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.settings-panel h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.settings-panel .form-field {
+    margin-bottom: 15px;
+}
+
+.settings-panel .description {
+    margin: 5px 0 0 25px;
+    color: #666;
+    font-style: italic;
+}
+
+.filter-blocks .separator {
+    margin: 0 5px;
+    color: #ddd;
+}
+
+.settings-link {
+    color: #2271b1;
+    text-decoration: none;
+}
+
+.settings-link.active {
+    color: #000;
+    font-weight: 600;
 }

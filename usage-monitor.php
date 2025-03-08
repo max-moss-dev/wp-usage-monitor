@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Block Usage
- * Description: A plugin to list all registered Gutenberg blocks in the WordPress admin.
+ * Plugin Name: Block Usage Monitor
+ * Description: Track and analyze Gutenberg block usage across your entire WordPress site. Find which blocks are used where.
  * Version: 1.0.0
  * Author: Max Moss
  * Text Domain: usage-monitor
@@ -65,6 +65,7 @@ class Block_Usage {
         add_action('wp_ajax_block_usage_find_posts', array($this, 'find_posts_with_block'));
         add_action('wp_ajax_block_usage_check_usage', array($this, 'check_block_usage'));
         add_action('wp_ajax_block_usage_record_scan', array($this, 'record_scan_timestamp'));
+        add_action('wp_ajax_block_usage_save_settings', array($this, 'save_settings'));
         
         // Track content updates
         add_action('save_post', array($this, 'track_content_update'), 10, 3);
@@ -208,6 +209,9 @@ class Block_Usage {
         $deactivation_time = get_option('block_usage_deactivation_time', 0);
         $was_reactivated = ($activation_time > $last_scan && $deactivation_time > 0);
         
+        // Get data retention setting
+        $keep_data = get_option('usage_monitor_keep_data', 'yes');
+        
         // Start output buffering
         ob_start();
         
@@ -219,6 +223,25 @@ class Block_Usage {
         
         // Output the admin page
         echo $output;
+    }
+    
+    /**
+     * Save data retention settings
+     */
+    public function save_settings() {
+        // Verify nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'block_usage_nonce')) {
+            wp_send_json_error(array('message' => 'Invalid security token.'));
+            return;
+        }
+        
+        // Get and sanitize keep_data setting
+        $keep_data = isset($_POST['keep_data']) ? sanitize_text_field($_POST['keep_data']) : 'yes';
+        
+        // Update option
+        update_option('usage_monitor_keep_data', $keep_data);
+        
+        wp_send_json_success(array('message' => 'Settings saved.'));
     }
     
     /**
