@@ -103,24 +103,24 @@
             <!-- Block Groups Sections -->
             <?php foreach ($block_groups as $prefix => $prefix_blocks) : ?>
                 <?php 
-                // Count used and total blocks in this section
-                $section_total = count($prefix_blocks);
-                $section_used = 0;
-                
-                foreach ($prefix_blocks as $block_name => $block) {
-                    $usage_count = isset($block_usage_stats[$block_name]) ? $block_usage_stats[$block_name] : 0;
-                    if ($usage_count > 0) {
-                        $section_used++;
+                    // Count used and total blocks in this section
+                    $section_total = count($prefix_blocks);
+                    $section_used = 0;
+                    
+                    foreach ($prefix_blocks as $block_name => $block) {
+                        $usage_count = isset($block_usage_stats[$block_name]) ? $block_usage_stats[$block_name] : 0;
+                        if ($usage_count > 0) {
+                            $section_used++;
+                        }
                     }
-                }
-                
-                $display_prefix = ucfirst($prefix); 
+                    
+                    $display_prefix = ucfirst($prefix); 
                 ?>
                 <div class="block-group-container">
                     <h2 class="block-group-title">
                         <?php 
-                        /* translators: %s: Block category or group name */
-                        echo esc_html(sprintf(__('%s Blocks', 'usage-monitor'), $display_prefix)); 
+                            /* translators: %s: Block category or group name */
+                            echo esc_html(sprintf(__('%s Blocks', 'usage-monitor'), $display_prefix)); 
                         ?>
                         <span class="block-count">
                             <span class="used-count"><?php echo esc_attr($section_used); ?></span> / <span class="total-count"><?php echo esc_attr($section_total); ?></span> <?php echo esc_html__('used', 'usage-monitor'); ?>
@@ -138,8 +138,8 @@
                             <?php if (empty($prefix_blocks)) : ?>
                             <tr>
                                 <td><?php 
-                                /* translators: %s: Block category or group name in lowercase */
-                                echo esc_html(sprintf(__('No %s blocks found.', 'usage-monitor'), strtolower($display_prefix))); 
+                                    /* translators: %s: Block category or group name in lowercase */
+                                    echo esc_html(sprintf(__('No %s blocks found.', 'usage-monitor'), strtolower($display_prefix))); 
                                 ?></td>
                             </tr>
                             <?php else : ?>
@@ -197,13 +197,13 @@
         <?php endif; ?>
         
         <!-- Settings section hidden by default -->
-        <div class="settings-panel" style="display: none;">
-            <h3><?php echo esc_html__('Plugin Settings', 'usage-monitor'); ?></h3>
+        <div class="settings-panel">
+            <h3><?php echo __('Plugin Settings', 'usage-monitor'); ?></h3>
             <form id="usage-monitor-settings-form">
                 <div class="form-field">
+                    <input type="radio" name="keep_data" value="yes" <?php checked($keep_data, 'yes'); ?>>
                     <label>
-                        <input type="radio" name="keep_data" value="yes" <?php checked($keep_data, 'yes'); ?>>
-                        <?php echo esc_html__('Keep data when plugin is uninstalled (recommended)', 'usage-monitor'); ?>
+                        <?php echo __('Keep data when plugin is uninstalled (recommended)', 'usage-monitor'); ?>
                     </label>
                     <p class="description"><?php echo esc_html__('Your block usage data will be preserved if you uninstall the plugin.', 'usage-monitor'); ?></p>
                 </div>
@@ -216,7 +216,7 @@
                 </div>
                 <div class="form-field">
                     <button type="submit" class="button button-primary"><?php echo esc_html__('Save Settings', 'usage-monitor'); ?></button>
-                    <span class="settings-saved" style="display:none; color:green; margin-left:10px;"><?php echo esc_html__('Settings saved!', 'usage-monitor'); ?></span>
+                    <span class="settings-saved"><?php echo esc_html__('Settings saved!', 'usage-monitor'); ?></span>
                 </div>
             </form>
         </div>

@@ -221,7 +221,45 @@ class Block_Usage {
         // Get the buffered content and clean the buffer
         $output = ob_get_clean();
         
-        echo wp_kses_post($output);
+        // Define allowed HTML tags including form elements
+        $allowed_html = array_merge(
+            wp_kses_allowed_html('post'),
+            array(
+                'form' => array(
+                    'id' => true,
+                    'class' => true,
+                    'method' => true,
+                    'action' => true,
+                    'enctype' => true,
+                ),
+                'input' => array(
+                    'type' => true,
+                    'name' => true,
+                    'id' => true,
+                    'class' => true,
+                    'value' => true,
+                    'checked' => true,
+                ),
+                'select' => array(
+                    'name' => true,
+                    'id' => true,
+                    'class' => true,
+                ),
+                'option' => array(
+                    'value' => true,
+                    'selected' => true,
+                ),
+                'button' => array(
+                    'type' => true,
+                    'class' => true,
+                    'id' => true,
+                    'name' => true,
+                ),
+            )
+        );
+        
+        // Output the admin page with custom allowed HTML
+        echo wp_kses($output, $allowed_html);
     }
     
     /**

@@ -1,5 +1,8 @@
 <?php
-// If uninstall.php is not called by WordPress, exit
+/**
+ * Uninstall script for Usage Monitor plugin
+ */
+
 if (!defined('WP_UNINSTALL_PLUGIN')) {
     exit;
 }
@@ -15,11 +18,26 @@ if ($keep_data) {
 // Delete custom database table
 global $wpdb;
 $table_name = $wpdb->prefix . 'block_usage_stats';
-$wpdb->query("DROP TABLE IF EXISTS $table_name");
 
-// Delete all options
-delete_option('block_usage_activation_time');
-delete_option('block_usage_deactivation_time');
-delete_option('block_usage_last_scan');
-delete_option('block_usage_content_updated');
-delete_option('usage_monitor_keep_data'); 
+// Include WordPress database upgrade functionality
+require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+// Direct DB operations are expected in uninstall scripts
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+$wpdb->query("DROP TABLE IF EXISTS " . esc_sql($table_name));
+// phpcs:enable
+
+// Delete all plugin-related options
+$options = array(
+    'block_usage_activation_time',
+    'block_usage_deactivation_time',
+    'block_usage_last_scan',
+    'block_usage_content_updated',
+    'usage_monitor_keep_data'
+);
+
+foreach ($options as $option) {
+    delete_option($option);
+} 

@@ -238,41 +238,6 @@
                 const currentStatus = $row.attr('data-usage-status');
                 
                 if (currentStatus === 'loading') {
-                    // Need to check this block
-                    const blockName = $row.data('block-name');
-                    const $link = $row.find('.block-title-link');
-                    const searchPattern = $link.data('search-pattern');
-                    
-                    // Check if this block is used
-                    checkBlockUsage(blockName, searchPattern, function(isUsed, count) {
-                        // Update the block status
-                        $row.attr('data-usage-status', isUsed ? 'used' : 'unused');
-                        
-                        // Update the usage count
-                        const $countCell = $row.find('.usage-count-cell');
-                        $countCell.html(`<span class="usage-count">${count}</span>`);
-                        
-                        // Format count based on value
-                        const $count = $countCell.find('.usage-count');
-                        if (count > 10) {
-                            $count.attr('data-count', 'high');
-                        } else if (count > 0) {
-                            $count.attr('data-count', 'medium');
-                        } else {
-                            $count.attr('data-count', 'low');
-                        }
-                        
-                        // Apply filter
-                        if ((filterType === 'used' && isUsed) || 
-                            (filterType === 'unused' && !isUsed)) {
-                            $row.show();
-                        } else {
-                            $row.hide();
-                        }
-                        
-                        // Update filter counts
-                        updateFilterCounts();
-                    });
                 } else {
                     // Already have status, just filter
                     if ((filterType === 'used' && currentStatus === 'used') || 
@@ -336,14 +301,6 @@
             
             // Set initial filter counts based on existing data
             updateFilterCounts();
-            
-            // Add click handler for filter links
-            $('.filter-link').on('click', function(e) {
-                e.preventDefault();
-                const filterType = $(this).data('filter');
-                filterBlocksByUsage(filterType);
-                filterSectionsByUsage(filterType);
-            });
             
             // Add click handler for close sidebar button
             $('.close-sidebar').on('click', function() {
@@ -535,7 +492,7 @@
                     if (batchCompleted === batch.length) {
                         setTimeout(function() {
                             processScanBatch(blocks, endIndex, batchSize, processedBlocks, totalBlocks);
-                        }, 100); // Small delay to avoid overloading the server
+                        }, 100);
                     }
                 });
             });
