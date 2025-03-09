@@ -10,10 +10,6 @@ A WordPress plugin that provides an overview of all registered Gutenberg blocks 
 - **Easy Filtering**: Filter by used/unused blocks to identify opportunities for cleanup
 - **Template & Site Editor Support**: Includes blocks used in FSE templates and template parts
 
-## Screenshots
-
-![Block Usage Admin View](assets/images/screenshot-1.png)
-
 ## Installation
 
 1. Download the plugin zip file
